@@ -28,4 +28,8 @@ export default class SafeMongo {
          this.waiting.forEach(e => e());
       })
    }
+
+   public disconnect() {
+      return this.client.close();
+   }
 }

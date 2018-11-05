@@ -369,4 +369,6 @@ describe("Model", () => {
          expect(new_doc.age).to.be.equal(config.model.default_age);
       })
    })
+
+   after(() => safemongo.disconnect().then(() => process.exit()))
 })
