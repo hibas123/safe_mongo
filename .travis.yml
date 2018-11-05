@@ -1,0 +1,12 @@
+language: node_js
+sudo: false
+services:
+  - mongodb
+node_js:
+  - 10
+install:
+  - npm install
+before_script:
+  - npm run build
+script:
+  - npm test
