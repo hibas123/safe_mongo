@@ -18,6 +18,7 @@ export interface Property<T, V> {
 
 export interface ModelPropery extends Property<SchemaNodeObject, {}> {
    model: true;
+   array?: boolean;
 }
 
 export type PropertyNode =

@@ -1,0 +1,6 @@
+tsconfig.json
+src/
+.travis.yml
+node_modules/
+mongodb/
+tsconfig.json

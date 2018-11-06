@@ -1,9 +1,14 @@
 {
-   "name": "safe_mongo",
-   "version": "1.0.0",
+   "name": "@hibas123/safe_mongo",
+   "version": "1.1.0",
    "main": "lib/index.js",
+   "types": "lib/index.d.ts",
    "author": "Fabian Stamm <dev@fabianstamm.de>",
    "license": "MIT",
+   "repository": {
+      "url": "https://github.com/hibas123/safe_mongo",
+      "type": "git"
+   },
    "scripts": {
       "prepublish": "tsc",
       "build": "tsc",

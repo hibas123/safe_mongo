@@ -69,6 +69,7 @@ interface TestModel extends ModelDataBase {
    is_male?: boolean;
    created: Date;
    nested: { val: string };
+   nested_arr: { val: string }[];
    age: number;
 }
 
@@ -99,6 +100,15 @@ const model_definition: ModelDefinition = {
                   val: {
                      type: String,
                      default: config.model.default_val
+                  }
+               }
+            },
+            nested_arr: {
+               model: true,
+               array: true,
+               type: {
+                  val: {
+                     type: String
                   }
                }
             }
@@ -133,6 +143,15 @@ const new_version: VersionNode = {
             val: {
                type: String,
                default: config.model.default_val
+            }
+         }
+      },
+      nested_arr: {
+         model: true,
+         array: true,
+         type: {
+            val: {
+               type: String
             }
          }
       },
@@ -221,6 +240,11 @@ describe("Model", () => {
 
             it("invalid type", () => {
                const t = () => model.new(<any>{ nested: { val: 16 } })
+               expect(t).to.throw();
+            })
+
+            it("invalid property arr", () => {
+               const t = () => model.new(<any>{ username: "testun", nested_arr: { invalid_prop: "asd" } })
                expect(t).to.throw();
             })
          })

@@ -126,7 +126,10 @@ export default class Model<T extends ModelDataBase> {
             let val = obj[key];
             if (val) {
                if ((<ModelPropery>should).model) {
-                  checkObj(val, <SchemaNodeObject>should.type);
+                  if ((<ModelPropery>should).array) {
+                     val.forEach(e => checkObj(e, <SchemaNodeObject>should.type))
+                  } else
+                     checkObj(val, <SchemaNodeObject>should.type);
                } else {
                   switch (should.type) {
                      case String:
@@ -151,8 +154,14 @@ export default class Model<T extends ModelDataBase> {
                }
             } else {
                if ((<ModelPropery>should).model) {
-                  if (!obj[key]) obj[key] = {};
-                  checkObj(obj[key], <SchemaNodeObject>should.type);
+                  if ((<ModelPropery>should).array) {
+                     if (!obj[key])
+                        obj[key] = [];
+                  } else {
+                     if (!obj[key])
+                        obj[key] = {};
+                     checkObj(obj[key], <SchemaNodeObject>should.type);
+                  }
                } else if (add_default && should.default) {
                   let def;
                   // console.log(typeof should.default === "function" ? should.default.apply(obj) : "nofunction");
