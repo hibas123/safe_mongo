@@ -24,7 +24,7 @@ export default class SafeMongo {
    }
 
    public connect() {
-      return this.client.connect().then(() => this.db = this.client.db("dbName")).then(() => {
+      return this.client.connect().then(() => this.db = this.client.db(this.database_name)).then(() => {
          this.waiting.forEach(e => e());
       })
    }
