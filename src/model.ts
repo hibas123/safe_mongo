@@ -173,7 +173,7 @@ export default class Model<T extends ModelDataBase> {
                         obj[key] = {};
                      checkObj(obj[key], <SchemaNodeObject>should.type);
                   }
-               } else if (add_default && should.default) {
+               } else if (add_default && should.default !== undefined) {
                   let def;
                   // console.log(typeof should.default === "function" ? should.default.apply(obj) : "nofunction");
                   if (typeof should.default === "function") def = should.default.apply(obj);
