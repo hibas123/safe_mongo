@@ -1,4 +1,5 @@
 import { ObjectID } from "mongodb";
+import Model from "./model";
 
 export interface SchemaNodeObject {
    [K: string]: PropertyNode;
@@ -28,6 +29,7 @@ export type PropertyNode =
    Property<DateConstructor, Date> |
    Property<ArrayConstructor, any[]> |
    ModelPropery |
+   // Property<typeof Model, Model<any>[]> |
    Property<typeof ObjectID, ObjectID>
 
 

@@ -367,6 +367,42 @@ describe("Model", () => {
          });
       })
 
+      describe("delete", () => {
+         let doc: TestModel;
+         beforeEach(async () => {
+            await dropC()
+            let m = model.new({
+               is_male: true,
+               name: "Name One",
+               nested: {
+                  val: "Test"
+               },
+               username: "username_"
+            })
+            await model.save(m);
+            doc = m;
+         })
+
+         it("with id", async () => {
+            await model.delete(doc._id)
+            let d = await model.findById(doc._id);
+            expect(d).to.be.null;
+         })
+
+         it("with id string", async () => {
+            await model.delete(doc._id.toHexString())
+            let d = await model.findById(doc._id);
+            expect(d).to.be.null;
+         })
+
+         it("with doc", async () => {
+            await model.delete(doc)
+            let d = await model.findById(doc._id);
+            expect(d).to.be.null;
+         })
+
+      })
+
       it("migration", async () => {
          await dropC()
          let old_doc = model.new({

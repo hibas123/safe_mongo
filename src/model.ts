@@ -90,6 +90,13 @@ export default class Model<T extends ModelDataBase> {
       return elms;
    }
 
+   async delete(doc: T | ObjectID | string) {
+      if (typeof doc === "string") doc = new ObjectID(doc);
+      if (!ObjectID.isValid(<any>doc)) doc = (<any>doc)._id;
+
+      await (await this._collection).deleteOne({ _id: doc });
+   }
+
    private _add_fetched(data: T) {
       this._fetched.set(data, recursiveDeepCopy(data));
    }
