@@ -97,6 +97,10 @@ export default class Model<T extends ModelDataBase> {
       await (await this._collection).deleteOne({ _id: doc });
    }
 
+   async deleteFilter(filter: FilterQuery<T>) {
+      await (await this._collection).deleteMany(filter);
+   }
+
    private _add_fetched(data: T) {
       this._fetched.set(data, recursiveDeepCopy(data));
    }

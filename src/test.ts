@@ -377,7 +377,7 @@ describe("Model", () => {
                nested: {
                   val: "Test"
                },
-               username: "username_"
+               username: "username"
             })
             await model.save(m);
             doc = m;
@@ -397,6 +397,12 @@ describe("Model", () => {
 
          it("with doc", async () => {
             await model.delete(doc)
+            let d = await model.findById(doc._id);
+            expect(d).to.be.null;
+         })
+
+         it("with filter", async () => {
+            await model.deleteFilter({ username: doc.username })
             let d = await model.findById(doc._id);
             expect(d).to.be.null;
          })
