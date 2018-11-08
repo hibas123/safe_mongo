@@ -33,7 +33,7 @@ export type PropertyNode =
    Property<typeof ObjectID, ObjectID>
 
 
-export type Migration = <T>(old: T) => void | Promise<void>;
+export type Migration = (old: any) => void | Promise<void>;
 
 export interface VersionNode {
    schema: RootSchemaNode;
