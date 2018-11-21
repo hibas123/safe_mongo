@@ -3,7 +3,8 @@ sudo: false
 services:
   - mongodb
 node_js:
-  - 10
+  - "node"
+  - "lts/*"
 install:
   - npm install
 before_script:
