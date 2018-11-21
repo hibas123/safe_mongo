@@ -71,6 +71,7 @@ interface TestModel extends ModelDataBase {
    nested: { val: string };
    nested_arr: { val: string }[];
    age: number;
+   type: string;
 }
 
 const model_definition: ModelDefinition = {
@@ -85,6 +86,11 @@ const model_definition: ModelDefinition = {
             name: {
                type: String,
                default: config.model.default_name
+            },
+            type: {
+               type: String,
+               default: "test",
+               validate: (t) => t === "test" ? undefined : "Type has to be test!"
             },
             is_male: {
                type: Boolean,
@@ -274,6 +280,19 @@ describe("Model", () => {
             md.username = <any>12;
             await expect(model.save(md)).to.eventually.be.rejected;
          })
+
+         it("invalid - validate function", async () => {
+            let md = model.new(<any>{
+               is_male: true,
+               name: "Name One",
+               nested: {
+                  val: "Test"
+               },
+               username: "username_1"
+            });
+            md.type = "nottest";
+            await expect(model.save(md)).to.eventually.be.rejected;
+         })
       })
 
       describe("find", () => {
@@ -365,6 +384,14 @@ describe("Model", () => {
             entry = await model.findById(test_entry);
             expect(entry.name).to.equal("Name One");
          });
+
+         it("change invalid - validate function", async () => {
+            let entry = await model.findById(test_entry);
+            entry.type = "nottest"
+            await expect(model.save(entry)).to.eventually.be.rejected;
+            entry = await model.findById(test_entry);
+            expect(entry.name).to.equal("Name One");
+         })
       })
 
       describe("delete", () => {

@@ -162,6 +162,10 @@ export default class Model<T extends ModelDataBase> {
                      default:
                         throw new Error(key + " invalid datatype!")
                   }
+                  if (should.validate) {
+                     let err = (<any>should.validate)(val);
+                     if (err) throw new Error(err);
+                  }
                }
             } else {
                if ((<ModelPropery>should).model) {
