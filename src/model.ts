@@ -7,6 +7,9 @@ export interface ModelDataBase {
    _v: number;
 }
 
+type FilterProperties<T, U> = { [key in keyof T]: T[key] extends U ? key : never };
+type AllowedNames<T, U> = FilterProperties<T, U>[keyof T];
+
 export default class Model<T extends ModelDataBase> {
    private _collection: Promise<Collection<T>>;
    private _version: number;
@@ -99,6 +102,11 @@ export default class Model<T extends ModelDataBase> {
 
    async deleteFilter(filter: FilterQuery<T>) {
       await (await this._collection).deleteMany(filter);
+   }
+
+   async incement(id: ObjectID | string, field: AllowedNames<T, number>, amount = 1) {
+      if (typeof id === "string") id = new ObjectID(id);
+      await this._collection.then(c => c.findOneAndUpdate({ _id: id }, { $inc: { [field]: amount } }));
    }
 
    private _add_fetched(data: T) {

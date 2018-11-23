@@ -8,52 +8,6 @@ import { ModelDefinition, VersionNode } from "./model_definitions";
 import Model, { ModelDataBase, recursiveDeepCopy } from "./model";
 import { Db, ObjectID } from "mongodb";
 
-// const sm = new SafeMongo("", "db");
-// const User = sm.addModel<User>({
-//    name: "Test",
-//    versions: [
-//       {
-//          migration: (old) => { },
-//          schema: {
-//             name: {
-//                type: String,
-//                default: "No name"
-//             },
-//             age: {
-//                type: Number
-//             },
-//             meta: {
-//                model: true,
-//                type: {
-//                   hair: {
-//                      type: String,
-//                      optional: true
-//                   },
-//                   gender: {
-//                      type: String,
-//                      default: "no gender"
-//                   }
-//                }
-//             }
-//          }
-//       }
-//    ]
-// });
-
-// interface User extends ModelDataBase {
-//    name: string;
-//    age: number;
-//    meta: {
-//       hair?: string;
-//       gender: string;
-//    }
-// }
-
-// let u = User.new();
-// console.log(u);
-// u.age = 1;
-// User.validate(u);
-
 const config = {
    database: "test",
    collection: "test_model",
@@ -65,6 +19,7 @@ const config = {
 }
 interface TestModel extends ModelDataBase {
    username: string;
+   val: number;
    name: string;
    is_male?: boolean;
    created: Date;
@@ -82,6 +37,10 @@ const model_definition: ModelDefinition = {
          schema: {
             username: {
                type: String
+            },
+            val: {
+               type: Number,
+               default: 0
             },
             name: {
                type: String,
@@ -391,6 +350,14 @@ describe("Model", () => {
             await expect(model.save(entry)).to.eventually.be.rejected;
             entry = await model.findById(test_entry);
             expect(entry.name).to.equal("Name One");
+         })
+
+         it("increment", async () => {
+            let entry = await model.findById(test_entry);
+            let oldval = entry.val;
+            await model.incement(test_entry, "val", 1);
+            entry = await model.findById(test_entry);
+            expect(entry.val).to.be.equal(oldval + 1);
          })
       })
 
