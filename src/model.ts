@@ -1,5 +1,5 @@
-import { ModelDefinition, validate, SchemaNodeObject, Property, PropertyNode, ModelPropery } from "./model_definitions";
-import { Db, Collection, ObjectID, FilterQuery } from "mongodb";
+import { ModelDefinition, validate, SchemaNodeObject, ModelPropery } from "./model_definitions";
+import { Collection, ObjectID, FilterQuery } from "mongodb";
 import SafeMongo from ".";
 
 export interface ModelDataBase {
@@ -114,7 +114,6 @@ export default class Model<T extends ModelDataBase> {
    }
 
    private async _upgrade(data: T) {
-      // console.log("uprade", data._v, this._version);
       if (data._v != this._version) {
          if (data._v > this._version) throw new Error("Object version is larger, than this application supports. Please upgrade!");
          let versions = this._definition.versions.slice(data._v, this._definition.versions.length);
@@ -187,7 +186,6 @@ export default class Model<T extends ModelDataBase> {
                   }
                } else if (add_default && should.default !== undefined) {
                   let def;
-                  // console.log(typeof should.default === "function" ? should.default.apply(obj) : "nofunction");
                   if (typeof should.default === "function") def = should.default.apply(obj);
                   else def = should.default;
                   obj[key] = def;
