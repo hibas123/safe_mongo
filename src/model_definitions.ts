@@ -52,7 +52,8 @@ export type PropertyNode =
    Property<ArrayConstructor, any[]> |
    ModelPropery |
    // Property<typeof Model, Model<any>[]> |
-   Property<typeof ObjectID, ObjectID>
+   Property<typeof ObjectID, ObjectID> |
+   Property<ObjectConstructor, Object>
 
 
 export type Migration = (old: any) => void | Promise<void>;

@@ -166,6 +166,9 @@ export default class Model<T extends ModelDataBase> {
                      case ObjectID:
                         if (!ObjectID.isValid(val)) throw new Error(key + " should be of type " + should.type.name);
                         break;
+                     case Object:
+                        if (typeof val !== "object") throw new Error(key + " should be of type " + should.type.name);
+                        break;
                      default:
                         throw new Error(key + " invalid datatype!")
                   }
