@@ -1,6 +1,6 @@
 {
    "name": "@hibas123/safe_mongo",
-   "version": "1.4.0",
+   "version": "1.4.1",
    "main": "lib/index.js",
    "types": "lib/index.d.ts",
    "author": "Fabian Stamm <dev@fabianstamm.de>",
