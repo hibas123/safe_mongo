@@ -10,6 +10,12 @@ export interface ModelDataBase {
 type FilterProperties<T, U> = { [key in keyof T]: T[key] extends U ? key : never };
 type AllowedNames<T, U> = FilterProperties<T, U>[keyof T];
 
+export class InvalidObjectError extends Error {
+   constructor() {
+      super("This object was not initialized by using Model.new or prevoiously fetched!");
+   }
+}
+
 export default class Model<T extends ModelDataBase> {
    private _collection: Promise<Collection<T>>;
    private _version: number;
@@ -50,7 +56,7 @@ export default class Model<T extends ModelDataBase> {
    async save(data: T) {
       let old: T = undefined;
       if (!this._new.has(data) && !(old = this._fetched.get(data))) {
-         throw new Error("This object was not initialized by using Model.new or prevoiously fetched!");
+         throw new InvalidObjectError();
       }
       this._validate(data, !!old);
       data._v = this._version;
@@ -104,9 +110,27 @@ export default class Model<T extends ModelDataBase> {
       await (await this._collection).deleteMany(filter);
    }
 
-   async incement(id: ObjectID | string, field: AllowedNames<T, number>, amount = 1) {
-      if (typeof id === "string") id = new ObjectID(id);
-      await this._collection.then(c => c.findOneAndUpdate({ _id: id }, { $inc: { [field]: amount } }));
+   async incement(elm: ObjectID | string | T, field: AllowedNames<T, number>, amount = 1) {
+      if (typeof elm === "string") elm = new ObjectID(elm);
+      let id: ObjectID;
+      if (elm instanceof ObjectID) {
+         id = elm;
+      } else {
+         if (!this._new.has(elm)) {
+            if (this._fetched.has(elm)) {
+               id = elm._id;
+            } else {
+               throw new InvalidObjectError();
+            }
+         }
+      }
+
+      if (id)
+         await this._collection.then(c => c.findOneAndUpdate({ _id: id }, { $inc: { [field]: amount } }));
+
+      if (!(elm instanceof ObjectID)) {
+         (<any>elm[field]) += amount;
+      }
    }
 
    private _add_fetched(data: T) {

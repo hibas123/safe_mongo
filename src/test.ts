@@ -5,7 +5,7 @@ import chaiap from "chai-as-promised"
 chai.use(chaiap);
 const { expect } = chai;
 import { ModelDefinition, VersionNode } from "./model_definitions";
-import Model, { ModelDataBase, recursiveDeepCopy } from "./model";
+import Model, { ModelDataBase, recursiveDeepCopy, InvalidObjectError } from "./model";
 import { Db, ObjectID } from "mongodb";
 
 const config = {
@@ -352,12 +352,27 @@ describe("Model", () => {
             expect(entry.name).to.equal("Name One");
          })
 
-         it("increment", async () => {
+         it("increment id", async () => {
             let entry = await model.findById(test_entry);
             let oldval = entry.val;
             await model.incement(test_entry, "val", 1);
             entry = await model.findById(test_entry);
             expect(entry.val).to.be.equal(oldval + 1);
+         })
+
+         it("increment element", async () => {
+            let entry = await model.findById(test_entry);
+            let oldval = entry.val;
+            await model.incement(entry, "val", 1);
+            expect(entry.val).to.be.equal(oldval + 1);
+            entry = await model.findById(test_entry);
+            expect(entry.val).to.be.equal(oldval + 1);
+         })
+
+         it("increment element - invalid", async () => {
+            let entry = await model.findById(test_entry);
+            let oldval = entry.val;
+            expect(model.incement(<any>{ val: 12 }, "val", 1)).to.eventually.be.rejected;
          })
       })
 
