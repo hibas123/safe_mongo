@@ -25,6 +25,7 @@ interface TestModel extends ModelDataBase {
    created: Date;
    nested: { val: string };
    nested_arr: { val: string }[];
+   nested_opt?: { val: string };
    age: number;
    type: string;
 }
@@ -76,6 +77,16 @@ const model_definition: ModelDefinition = {
                      type: String
                   }
                }
+            },
+            nested_opt: {
+               model: true,
+               optional: true,
+               type: {
+                  val: {
+                     type: String,
+                     default: config.model.default_val
+                  }
+               }
             }
          }
       }
@@ -117,6 +128,16 @@ const new_version: VersionNode = {
          type: {
             val: {
                type: String
+            }
+         }
+      },
+      nested_opt: {
+         model: true,
+         optional: true,
+         type: {
+            val: {
+               type: String,
+               default: config.model.default_val
             }
          }
       },
@@ -212,6 +233,10 @@ describe("Model", () => {
                const t = () => model.new(<any>{ username: "testun", nested_arr: { invalid_prop: "asd" } })
                expect(t).to.throw();
             })
+         })
+         it("nested - optional", () => {
+            let nd = model.new();
+            expect(nd.nested_opt).to.not.exist;
          })
       })
 

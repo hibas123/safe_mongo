@@ -204,15 +204,16 @@ export default class Model<T extends ModelDataBase> {
             } else {
                if ((<ModelPropery>should).model) {
                   if ((<ModelPropery>should).array) {
-                     if (!obj[key])
+                     if (!obj[key] && !should.optional)
                         obj[key] = [];
                   } else {
-                     if (!obj[key])
+                     if (!obj[key] && !should.optional)
                         obj[key] = {};
-                     checkObj(obj[key], <SchemaNodeObject>should.type);
+                     if (!should.optional || obj[key])
+                        checkObj(obj[key], <SchemaNodeObject>should.type);
                   }
                } else if (add_default && should.default !== undefined) {
-                  let def;
+                  let def: typeof should.default;
                   if (typeof should.default === "function") def = should.default.apply(obj);
                   else def = should.default;
                   obj[key] = def;
