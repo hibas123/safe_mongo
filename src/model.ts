@@ -78,24 +78,24 @@ export default class Model<T extends ModelDataBase> {
       if (typeof id === "string") id = new ObjectID(id);
       let res = await (await this._collection).findOne<T>({ _id: id });
       if (!res) return null;
-      res = await this._upgrade(res);
       this._add_fetched(res);
+      await this._upgrade(res);
       return res;
    }
 
    async findOne(filter: FilterQuery<T>): Promise<T | null> {
       let res = await (await this._collection).findOne(filter);
       if (!res) return null;
-      res = await this._upgrade(res);
       this._add_fetched(res);
+      await this._upgrade(res);
       return res;
    }
 
    async find(filter: FilterQuery<T>): Promise<T[]> {
       let res = await (await this._collection).find(filter);
       let elms = await res.toArray();
-      elms = await Promise.all(elms.map(e => this._upgrade(e)));
       elms.forEach(e => this._add_fetched(e))
+      await Promise.all(elms.map(e => this._upgrade(e)));
       return elms;
    }
 
@@ -149,7 +149,6 @@ export default class Model<T extends ModelDataBase> {
       }
       data._v = this._version;
       await this.save(data)
-      return data;
    }
 
    private _validate(data: T, check_id = true, add_default = false, all_optional = false) {
