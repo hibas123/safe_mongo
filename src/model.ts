@@ -148,6 +148,7 @@ export default class Model<T extends ModelDataBase> {
          }
       }
       data._v = this._version;
+      await this.save(data)
       return data;
    }
 
