@@ -1,4 +1,4 @@
-import { ModelDefinition, validate, SchemaNodeObject, ModelPropery } from "./model_definitions";
+import { ModelDefinition, validate, SchemaNodeObject, ModelPropery, AllSymbol } from "./model_definitions";
 import { Collection, ObjectID, FilterQuery } from "mongodb";
 import SafeMongo from ".";
 
@@ -159,13 +159,19 @@ export default class Model<T extends ModelDataBase> {
       let version = getLast(this._definition.versions);
 
       const checkObj = (obj: any, schema: SchemaNodeObject) => {
+         if (process.env.asdw === "asdeq")
+            console.log(Object.keys(obj), Object.keys(schema))
+
          let additional = Object.keys(obj).filter(v => !schema[v] && v !== "_id" && v !== "_v")
-         if (additional.length > 0)
-            throw new Error("Invalid properties set! " + additional.join(" "));
-         for (let key in schema) {
+         if (additional.length > 0 && !schema[AllSymbol])
+            throw new Error("Invalid properties set: [" + additional.join(", ") + "]");
+
+         let keys = [...Object.keys(schema), ...additional];
+         for (let key of keys) {
             if (key === "_id" || key === "_v") continue;
-            let should = schema[key];
+            let should = schema[key] || schema[AllSymbol];
             let val = obj[key];
+
             if (val !== undefined && val !== null) {
                if ((<ModelPropery>should).model) {
                   if ((<ModelPropery>should).array) {

@@ -4,7 +4,7 @@ import * as chai from "chai";
 import chaiap from "chai-as-promised"
 chai.use(chaiap);
 const { expect } = chai;
-import { ModelDefinition, VersionNode } from "./model_definitions";
+import { ModelDefinition, VersionNode, AllSymbol } from "./model_definitions";
 import Model, { ModelDataBase, recursiveDeepCopy, InvalidObjectError } from "./model";
 import { Db, ObjectID } from "mongodb";
 
@@ -101,9 +101,18 @@ const new_version: VersionNode = {
       username: {
          type: String
       },
+      val: {
+         type: Number,
+         default: 0
+      },
       name: {
          type: String,
          default: config.model.default_name
+      },
+      type: {
+         type: String,
+         default: "test",
+         validate: (t) => t === "test" ? undefined : "Type has to be test!"
       },
       is_male: {
          type: Boolean,
@@ -470,5 +479,42 @@ describe("Model", () => {
       })
    })
 
-   after(() => safemongo.disconnect().then(() => process.exit()))
+   describe("additional", () => {
+      describe("AllSymbol", () => {
+         const schema = {
+            name: config.collection,
+            versions: [
+               {
+                  migration: async (doc) => { },
+                  schema: {
+                     [AllSymbol]: {
+                        type: String
+                     }
+                  }
+               }
+            ]
+         }
+         it("correct", () => {
+            let m = safemongo.addModel<any>(schema);
+            m.validate({
+               name: "hallo"
+            })
+         })
+
+         it("incorrect", () => {
+            let m = safemongo.addModel<any>(schema);
+            let err = false;
+            try {
+               m.validate({
+                  name: 1
+               })
+            } catch (e) {
+               err = true;
+            }
+            expect(err).to.be.true;
+         })
+      })
+   })
+
+   after(() => safemongo.disconnect())
 })

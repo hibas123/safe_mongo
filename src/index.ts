@@ -1,3 +1,6 @@
+export { ModelDataBase } from "./model"
+export { AllSymbol } from "./model_definitions";
+
 import { MongoClient, MongoClientOptions, Db } from "mongodb";
 import { ModelDefinition } from "./model_definitions";
 import Model, { ModelDataBase } from "./model";

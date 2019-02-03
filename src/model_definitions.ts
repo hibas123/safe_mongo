@@ -1,7 +1,13 @@
 import { ObjectID } from "mongodb";
-import Model from "./model";
+
+/**
+ * This symbol can be used to address all root properties of an model deginition. 
+ * It can be used together with special definitions and then acts as "backup".
+ */
+export const AllSymbol = Symbol("AllAttributes");
 
 export interface SchemaNodeObject {
+   [AllSymbol]?: PropertyNode;
    [K: string]: PropertyNode;
    [K: number]: PropertyNode;
 }
