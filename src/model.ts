@@ -1,4 +1,4 @@
-import { ModelDefinition, validate, SchemaNodeObject, ModelPropery, AllSymbol } from "./model_definitions";
+import { ModelDefinition, validate, SchemaNodeObject, ModelPropery, AllSymbol, AnyType } from "./model_definitions";
 import { Collection, ObjectID, FilterQuery } from "mongodb";
 import SafeMongo from ".";
 
@@ -198,6 +198,8 @@ export default class Model<T extends ModelDataBase> {
                         break;
                      case Object:
                         if (typeof val !== "object") throw new Error(key + " should be of type " + should.type.name);
+                        break;
+                     case "any": //Just accept all type of values
                         break;
                      default:
                         throw new Error(key + " invalid datatype!")

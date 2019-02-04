@@ -1,6 +1,6 @@
 {
    "name": "@hibas123/safe_mongo",
-   "version": "1.5.0",
+   "version": "1.5.1",
    "main": "lib/index.js",
    "types": "lib/index.d.ts",
    "author": "Fabian Stamm <dev@fabianstamm.de>",
@@ -10,7 +10,7 @@
       "type": "git"
    },
    "scripts": {
-      "prepublish": "tsc",
+      "prepublishOnly": "tsc",
       "build": "tsc",
       "watch-ts": "tsc -w",
       "watch-node": "nodemon --exec \" mocha lib/test.js --exit\"",

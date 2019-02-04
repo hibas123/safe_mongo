@@ -5,6 +5,7 @@ import { ObjectID } from "mongodb";
  * It can be used together with special definitions and then acts as "backup".
  */
 export const AllSymbol = Symbol("AllAttributes");
+export type AnyType = "any";
 
 export interface SchemaNodeObject {
    [AllSymbol]?: PropertyNode;
@@ -59,7 +60,8 @@ export type PropertyNode =
    ModelPropery |
    // Property<typeof Model, Model<any>[]> |
    Property<typeof ObjectID, ObjectID> |
-   Property<ObjectConstructor, Object>
+   Property<ObjectConstructor, Object> |
+   Property<AnyType, any>
 
 
 export type Migration = (old: any) => void | Promise<void>;
