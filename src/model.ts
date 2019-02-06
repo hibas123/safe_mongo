@@ -173,40 +173,42 @@ export default class Model<T extends ModelDataBase> {
             let val = obj[key];
 
             if (val !== undefined && (val !== null || should.allow_null)) {
-               if ((<ModelPropery>should).model) {
-                  if ((<ModelPropery>should).array) {
-                     val.forEach(e => checkObj(e, <SchemaNodeObject>should.type))
-                  } else
-                     checkObj(val, <SchemaNodeObject>should.type);
-               } else {
-                  switch (should.type) {
-                     case String:
-                        if (typeof val !== "string") throw new Error(key + " should be of type string");
-                        break;
-                     case Number:
-                        if (typeof val !== "number") throw new Error(key + " should be of type number");
-                        break;
-                     case Boolean:
-                        if (typeof val !== "boolean") throw new Error(key + " should be of type boolean");
-                        break;
-                     case Date:
-                     case Array:
-                        if (!(val instanceof should.type)) throw new Error(key + " should be of type " + should.type.name);
-                        break;
-                     case ObjectID:
-                        if (!ObjectID.isValid(val)) throw new Error(key + " should be of type " + should.type.name);
-                        break;
-                     case Object:
-                        if (typeof val !== "object") throw new Error(key + " should be of type " + should.type.name);
-                        break;
-                     case "any": //Just accept all type of values
-                        break;
-                     default:
-                        throw new Error(key + " invalid datatype!")
-                  }
-                  if (should.validate) {
-                     let err = (<any>should.validate)(val);
-                     if (err) throw new Error(err);
+               if (!(should.allow_null && val === null)) {
+                  if ((<ModelPropery>should).model) {
+                     if ((<ModelPropery>should).array) {
+                        val.forEach(e => checkObj(e, <SchemaNodeObject>should.type))
+                     } else
+                        checkObj(val, <SchemaNodeObject>should.type);
+                  } else {
+                     switch (should.type) {
+                        case String:
+                           if (typeof val !== "string") throw new Error(key + " should be of type string");
+                           break;
+                        case Number:
+                           if (typeof val !== "number") throw new Error(key + " should be of type number");
+                           break;
+                        case Boolean:
+                           if (typeof val !== "boolean") throw new Error(key + " should be of type boolean");
+                           break;
+                        case Date:
+                        case Array:
+                           if (!(val instanceof should.type)) throw new Error(key + " should be of type " + should.type.name);
+                           break;
+                        case ObjectID:
+                           if (!ObjectID.isValid(val)) throw new Error(key + " should be of type " + should.type.name);
+                           break;
+                        case Object:
+                           if (typeof val !== "object") throw new Error(key + " should be of type " + should.type.name);
+                           break;
+                        case "any": //Just accept all type of values
+                           break;
+                        default:
+                           throw new Error(key + " invalid datatype!")
+                     }
+                     if (should.validate) {
+                        let err = (<any>should.validate)(val);
+                        if (err) throw new Error(err);
+                     }
                   }
                }
             } else {
