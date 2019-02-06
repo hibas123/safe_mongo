@@ -172,7 +172,7 @@ export default class Model<T extends ModelDataBase> {
             let should = schema[key] || schema[AllSymbol];
             let val = obj[key];
 
-            if (val !== undefined && val !== null) {
+            if (val !== undefined && (val !== null || should.allow_null)) {
                if ((<ModelPropery>should).model) {
                   if ((<ModelPropery>should).array) {
                      val.forEach(e => checkObj(e, <SchemaNodeObject>should.type))

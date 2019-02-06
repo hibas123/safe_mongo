@@ -40,6 +40,11 @@ export interface Property<T, V> {
    optional?: boolean;
 
    /**
+    * Allows null as valid value.
+    */
+   allow_null?: boolean;
+
+   /**
     * Validates record before save
     * @returns Error message or undefined or null
     */
