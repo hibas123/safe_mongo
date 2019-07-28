@@ -21,6 +21,7 @@ interface TestModel extends ModelDataBase {
    username: string;
    val: number;
    name: string;
+   tags: string[];
    is_male?: boolean;
    created: Date;
    nested: { val: string };
@@ -46,6 +47,10 @@ const model_definition: ModelDefinition = {
             name: {
                type: String,
                default: config.model.default_name
+            },
+            tags: {
+               type: String,
+               array: true
             },
             type: {
                type: String,
@@ -108,6 +113,10 @@ const new_version: VersionNode = {
       name: {
          type: String,
          default: config.model.default_name
+      },
+      tags: {
+         type: String,
+         array: true
       },
       type: {
          type: String,
@@ -198,6 +207,7 @@ describe("Model", () => {
             expect(nd).to.exist;
             expect(nd.username).to.not.exist;
             expect(nd.name).to.equal(config.model.default_name);
+            expect(nd.tags).to.eql([]);
             expect(nd.age).to.not.exist;
             expect(nd.is_male).to.not.exist;
             expect(nd.created).to.be.instanceof(Date);
@@ -206,16 +216,18 @@ describe("Model", () => {
          })
 
          it("correct parameter", () => {
-            let nd = model.new({ username: "testun", nested: { val: "teeest" } });
+            let nd = model.new({ username: "testun", nested: { val: "teeest" }, tags: ["test1", "test2"] });
             expect(nd).to.exist;
             expect(nd.username).to.equal("testun");
             expect(nd.name).to.equal(config.model.default_name);
+            expect(nd.tags).to.eql(["test1", "test2"]);
             expect(nd.age).to.not.exist;
             expect(nd.is_male).to.not.exist;
             expect(nd.created).to.be.instanceof(Date);
             expect(nd.nested).to.exist;
             expect(nd.nested.val).to.equal("teeest");
          })
+
 
          it("invalid property in parameter", () => {
             const t = () => model.new(<any>{ username: "testun", invalid_prop: "asd" })
@@ -224,6 +236,11 @@ describe("Model", () => {
 
          it("invalid type in parameter", () => {
             const t = () => model.new(<any>{ username: 15 })
+            expect(t).to.throw();
+         })
+
+         it("invalid type in array", () => {
+            const t = () => model.new(<any>{ tags: ["test1", 1, "test2"] });
             expect(t).to.throw();
          })
 

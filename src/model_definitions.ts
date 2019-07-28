@@ -49,11 +49,15 @@ export interface Property<T, V> {
     * @returns Error message or undefined or null
     */
    validate?: (value: V) => string | undefined | null;
+
+   /**
+    * This field should ba a array of the type type
+    */
+   array?: boolean;
 }
 
 export interface ModelPropery extends Property<SchemaNodeObject, {}> {
    model: true;
-   array?: boolean;
 }
 
 export type PropertyNode =

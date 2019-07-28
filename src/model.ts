@@ -170,58 +170,67 @@ export default class Model<T extends ModelDataBase> {
          for (let key of keys) {
             if (key === "_id" || key === "_v") continue;
             let should = schema[key] || schema[AllSymbol];
-            let val = obj[key];
+            let value = obj[key];
 
-            if (val !== undefined && (val !== null || should.allow_null)) {
-               if (!(should.allow_null && val === null)) {
+            if (value !== undefined && (value !== null || should.allow_null)) {
+               if (!(should.allow_null && value === null)) {
                   if ((<ModelPropery>should).model) {
-                     if ((<ModelPropery>should).array) {
-                        val.forEach(e => checkObj(e, <SchemaNodeObject>should.type))
+                     if (should.array) {
+                        value.forEach(e => checkObj(e, <SchemaNodeObject>should.type))
                      } else
-                        checkObj(val, <SchemaNodeObject>should.type);
+                        checkObj(value, <SchemaNodeObject>should.type);
                   } else {
-                     switch (should.type) {
-                        case String:
-                           if (typeof val !== "string") throw new Error(key + " should be of type string");
-                           break;
-                        case Number:
-                           if (typeof val !== "number") throw new Error(key + " should be of type number");
-                           break;
-                        case Boolean:
-                           if (typeof val !== "boolean") throw new Error(key + " should be of type boolean");
-                           break;
-                        case Date:
-                        case Array:
-                           if (!(val instanceof should.type)) throw new Error(key + " should be of type " + should.type.name);
-                           break;
-                        case ObjectID:
-                           if (!ObjectID.isValid(val)) throw new Error(key + " should be of type " + should.type.name);
-                           break;
-                        case Object:
-                           if (typeof val !== "object") throw new Error(key + " should be of type " + should.type.name);
-                           break;
-                        case "any": //Just accept all type of values
-                           break;
-                        default:
-                           throw new Error(key + " invalid datatype!")
+                     const check = (val) => {
+                        switch (should.type) {
+                           case String:
+                              if (typeof val !== "string") throw new Error(key + " should be of type string");
+                              break;
+                           case Number:
+                              if (typeof val !== "number") throw new Error(key + " should be of type number");
+                              break;
+                           case Boolean:
+                              if (typeof val !== "boolean") throw new Error(key + " should be of type boolean");
+                              break;
+                           case Date:
+                           case Array:
+                              if (!(val instanceof should.type)) throw new Error(key + " should be of type " + should.type.name);
+                              break;
+                           case ObjectID:
+                              if (!ObjectID.isValid(val)) throw new Error(key + " should be of type " + should.type.name);
+                              break;
+                           case Object:
+                              if (typeof val !== "object") throw new Error(key + " should be of type " + should.type.name);
+                              break;
+                           case "any": //Just accept all type of values
+                              break;
+                           default:
+                              throw new Error(key + " invalid datatype!")
+                        }
+                        if (should.validate) {
+                           let err = (<any>should.validate)(value);
+                           if (err) throw new Error(err);
+                        }
                      }
-                     if (should.validate) {
-                        let err = (<any>should.validate)(val);
-                        if (err) throw new Error(err);
+                     if (should.array) {
+                        if (!Array.isArray(value)) {
+                           throw new Error(key + " should be an Array");
+                        } else {
+                           value.forEach(val => check(val));
+                        }
+                     } else {
+                        check(value);
                      }
                   }
                }
             } else {
-               if ((<ModelPropery>should).model) {
-                  if ((<ModelPropery>should).array) {
-                     if (!obj[key] && !should.optional)
-                        obj[key] = [];
-                  } else {
-                     if (!obj[key] && !should.optional)
-                        obj[key] = {};
-                     if (!should.optional || obj[key])
-                        checkObj(obj[key], <SchemaNodeObject>should.type);
-                  }
+               if (should.array) {
+                  if (!obj[key] && !should.optional)
+                     obj[key] = [];
+               } else if ((<ModelPropery>should).model) {
+                  if (!obj[key] && !should.optional)
+                     obj[key] = {};
+                  if (!should.optional || obj[key])
+                     checkObj(obj[key], <SchemaNodeObject>should.type);
                } else if (add_default && should.default !== undefined) {
                   let def: typeof should.default;
                   if (typeof should.default === "function") def = should.default.apply(obj);
@@ -234,6 +243,10 @@ export default class Model<T extends ModelDataBase> {
       }
       checkObj(data, version.schema);
    }
+}
+
+function checkType() {
+
 }
 
 
