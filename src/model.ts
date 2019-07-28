@@ -91,8 +91,14 @@ export default class Model<T extends ModelDataBase> {
       return res;
    }
 
-   async find(filter: FilterQuery<T>): Promise<T[]> {
-      let res = await (await this._collection).find(filter);
+   async find(filter: FilterQuery<T>, limit?: number, skip?: number): Promise<T[]> {
+      let query = (await this._collection).find(filter);
+      if (limit)
+         query = query.limit(limit);
+      if (skip)
+         query = query.skip(skip);
+
+      let res = await query;
       let elms = await res.toArray();
       elms.forEach(e => this._add_fetched(e))
       await Promise.all(elms.map(e => this._upgrade(e)));
